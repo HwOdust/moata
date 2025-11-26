@@ -88,6 +88,20 @@ public class UserService {
     		
     }
     
+    public SiteUser getCurrentUser() // 유저 자체 리턴
+    {
+
+        String userId = getCurrentUserId();
+
+        if (userId == null) {
+            throw new RuntimeException("로그인된 사용자 없음");
+        }
+
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    
    
     public int getUserCount() 
     {

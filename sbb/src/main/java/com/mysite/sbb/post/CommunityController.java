@@ -8,9 +8,13 @@ import jakarta.servlet.http.HttpSession;
 
 import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
+import com.mysite.sbb.comment.CommentService;
+import com.mysite.sbb.comment.Comment;
 
 import lombok.RequiredArgsConstructor;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,6 +24,7 @@ public class CommunityController
 	private final PostRepository postRepository;
 	private final PostService postService;
 	private final UserService userService;
+	private final CommentService commentService;
 	
 	@GetMapping("/community")
 	public String communityList(@RequestParam(value="category", required=false) String category,
@@ -37,6 +42,15 @@ public class CommunityController
 
 	    model.addAttribute("postList", postList);
 
+	    // 댓글 개수 Map
+	    Map<Integer, Integer> commentCount=new HashMap<>();
+	    
+	    for(Post p:postList)
+	    {
+	    		int count=commentService.getCommentCount(p.getId());
+	    		commentCount.put(p.getId(),count);
+	    }
+	    
 	    // 유저 수, 게시글 수
 	    model.addAttribute("userCount", userService.getUserCount());
 	    model.addAttribute("postCount", postService.getPostCount());
@@ -44,26 +58,35 @@ public class CommunityController
 	    // 현재 카테고리 표시용
 	    model.addAttribute("currentCategory", category);
 	    model.addAttribute("selectedCategory", category);
+	    model.addAttribute("commentCount", commentCount);
 
 	    return "community";
 	}
 
 	
 	@GetMapping("/community_detail/{id}")
-    public String community_detail(@PathVariable("id")Integer id, Model model)
-    {
-		Post post = postRepository.findById(id).orElseThrow(()->new RuntimeException("게시글을 찾을 수 없습니다. "));
-		model.addAttribute("post",post); //게시글 정보 전송
-		
-		String user = userService.getCurrentUserId();
+	public String community_detail(@PathVariable("id") Integer id, Model model)
+	{
+	    // 게시글 불러오기
+	    Post post = postRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+	    model.addAttribute("post", post);
 
+	    // 로그인 유저 체크
+	    String user = userService.getCurrentUserId();
 	    if (user == null) {
 	        return "redirect:/login?needLogin2";
 	    }
-		
-	    model.addAttribute("user",user);
-    		return "community_detail";
-    }
+	    model.addAttribute("user", user);
+
+	    // 🔥 댓글 리스트 추가 (여기가 핵심)
+	    List<Comment> commentList = commentService.getComments(id);
+	    model.addAttribute("comments", commentList);
+
+	    // 상세 페이지로 이동
+	    return "community_detail";
+	}
+
 	
 	@PostMapping("/community_off/{id}")
 	public String stopRecruit(@PathVariable Integer id) {
@@ -169,7 +192,7 @@ public class CommunityController
 	}
 
 	
-
 	
+
 	
 }

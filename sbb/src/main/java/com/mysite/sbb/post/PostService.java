@@ -79,6 +79,12 @@ public class PostService {
 
         postRepository.delete(post);
     }
+    
+    public Post getPost(Integer id) 
+    {
+        return postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+    }
 
 
 

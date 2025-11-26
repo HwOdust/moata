@@ -127,7 +127,7 @@
 			                        <div class="flex items-center justify-between">
 			                            <div class="flex items-center gap-4 text-sm text-gray-600">
 			                                <span>❤️ 0</span>
-			                                <span>댓글 0</span>
+			                                <span>댓글 <span th:text="${commentCount[post.id]}"></span></span>
 			                                <span th:text="'조회수 ' + ${post.viewCnt}"></span>
 			                            </div>
 			                        </div>

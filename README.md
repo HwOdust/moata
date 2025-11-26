@@ -46,7 +46,7 @@
 | 구분 | 사용 기술 |
 |------|------------|
 | Frontend | HTML, CSS, JavaScript |
-| Backend | Spring Boot, eclise , MySQL |
+| Backend | Spring Boot, eclipse , MySQL |
 | Realtime | WebSocket, STOMP |
 | DevOps | GitHub |
 

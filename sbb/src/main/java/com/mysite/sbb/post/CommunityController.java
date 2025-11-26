@@ -35,32 +35,34 @@ public class CommunityController
 	    List<Post> postList;
 
 	    if (category == null || category.equals("전체")) {
-	        // 전체 게시글
-	        postList = postRepository.findAll(Sort.by(Sort.Direction.DESC,"id"));
+	        postList = postRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 	    } else {
-	        // 특정 카테고리만 필터링
 	        postList = postRepository.findByCategoryOrderByIdDesc(category);
 	    }
 
 	    model.addAttribute("postList", postList);
 
 	    // 댓글 개수 Map
-	    Map<Integer, Integer> commentCount=new HashMap<>();
-	    
-	    for(Post p:postList)
-	    {
-	    		int count=commentService.getCommentCount(p.getId());
-	    		commentCount.put(p.getId(),count);
+	    Map<Integer, Integer> commentCount = new HashMap<>();
+	    for (Post p : postList) {
+	        int count = commentService.getCommentCount(p.getId());
+	        commentCount.put(p.getId(), count);
 	    }
-	    
-	    // 유저 수, 게시글 수
+	    model.addAttribute("commentCount", commentCount);
+
+	    // ⭐ 추천 개수 Map 추가 (중요)
+	    Map<Integer, Integer> recommendCount = new HashMap<>();
+	    for (Post p : postList) {
+	        int r = recommendationService.count(p); // 추천 수 조회
+	        recommendCount.put(p.getId(), r);
+	    }
+	    model.addAttribute("recommendCount", recommendCount);
+
+	    // 기타 정보
 	    model.addAttribute("userCount", userService.getUserCount());
 	    model.addAttribute("postCount", postService.getPostCount());
-
-	    // 현재 카테고리 표시용
 	    model.addAttribute("currentCategory", category);
 	    model.addAttribute("selectedCategory", category);
-	    model.addAttribute("commentCount", commentCount);
 
 	    return "community";
 	}

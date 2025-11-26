@@ -93,7 +93,8 @@
 		                        
 		                    </div>
 		                    
-		                   <form th:action="@{'/recommend/' + ${post.id}}" method="post">
+		                   <form th:action="@{'/post/' + ${post.id} + '/recommend'}" method="post">
+
 						    <button 
 						        class="px-4 py-2 rounded-lg border transition"
 						        th:classappend="${isRecommended} ? ' bg-blue-600 text-white' : ' bg-white text-blue-600'"
